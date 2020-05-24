@@ -153,7 +153,6 @@ namespace conteoVehiculos
                     break;
 
                 case 2:
-
                     setIpCamera(txt_ip.Text,txt_usuario.Text,txt_contrasenia.Text);
                     timer1.Start();
                     break;
@@ -175,11 +174,11 @@ namespace conteoVehiculos
             {
                 if ((usuario != "" && contrasenia != ""))
                 {
-                    cap = new Capture("rtps://" + txt_usuario.Text + ":" + txt_contrasenia.Text + "@" + txt_ip.Text + ":" + txt_puerto.Text + "");
+                    cap = new Capture("rtsp://" + txt_usuario.Text + ":" + txt_contrasenia.Text + "@" + txt_ip.Text + ":" + txt_puerto.Text + "");
                 }
                 else
                 {
-                    cap = new Capture("rtps://" + txt_ip.Text + ":" + txt_puerto.Text + "");
+                    cap = new Capture("rtsp://" + txt_ip.Text + ":" + txt_puerto.Text + "");
                 }
                 cap.ImageGrabbed += Cap_ImageGrabbed;
                 cap.Start();

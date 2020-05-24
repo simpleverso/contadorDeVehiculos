@@ -41,8 +41,11 @@ namespace conteoVehiculos
     
     public partial class Form1 : Form
     {
-        Capture cap;
+        int frames = 30;
+        int thr = 40;
 
+        Capture cap;
+        bool leyendo = false;
         private FilterInfoCollection dispositivos;
         private VideoCaptureDevice camara;
 
@@ -56,13 +59,22 @@ namespace conteoVehiculos
         {
             InitializeComponent();
             dispositivos = new FilterInfoCollection(FilterCategory.VideoInputDevice);
-            foreach (FilterInfo cama in dispositivos)
+            try
+            {
+                foreach (FilterInfo cama in dispositivos)
+                {
+
+                    cmb_webcams.Items.Add(cama.Name);
+                }
+                cmb_fuente.SelectedIndex = 0;
+                cmb_webcams.SelectedIndex = 0;
+            }
+            catch (Exception)
             {
 
-                cmb_webcams.Items.Add(cama.Name);
+                MessageBox.Show("Error al leer driver de camara usb / No se encontraron camaras usb.");
             }
-            cmb_fuente.SelectedIndex = 0;
-            cmb_webcams.SelectedIndex = 0;
+            
 
             txt_video.Enabled = false;
             btn_buscar.Enabled = false;
@@ -75,15 +87,16 @@ namespace conteoVehiculos
 
         private void SetCamera(string nombreCam)
         {
-            //var deviceName = (from d in new FilterInfoCollection(FilterCategory.VideoInputDevice)
-            //                  select d).FirstOrDefault();
-            var deviceName = (from d in new FilterInfoCollection(FilterCategory.VideoInputDevice)
-                              select d).ToArray();
-
-            var captureDevice = new VideoCaptureDevice(deviceName[cmb_webcams.SelectedIndex].MonikerString);
-            //var captureDevice = new VideoCaptureDevice(nombreCam);
             try
             {
+                //var deviceName = (from d in new FilterInfoCollection(FilterCategory.VideoInputDevice)
+                //                  select d).FirstOrDefault();
+                var deviceName = (from d in new FilterInfoCollection(FilterCategory.VideoInputDevice)
+                                  select d).ToArray();
+
+                var captureDevice = new VideoCaptureDevice(deviceName[cmb_webcams.SelectedIndex].MonikerString);
+                //var captureDevice = new VideoCaptureDevice(nombreCam);
+
                 captureDevice.VideoResolution = (from r in captureDevice.VideoCapabilities
                                                  where r.FrameSize.Width == 1280
                                                  select r).First();
@@ -131,16 +144,26 @@ namespace conteoVehiculos
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (int.Parse(txt_tamanio.Text) >=300)
+            {
+                MessageBox.Show("El valor de tamaño de objeto sobrepasa el permitido (300) se cambiará a 80.");
+                txt_tamanio.Text = "80";
+            }
+            frames = int.Parse(txt_frames.Text);
+            thr = int.Parse(txt_thr.Text);
             if (cmb_fuente.SelectedIndex==1)
             {
                 videoPlayer.Stop();
+            }
+            else if (cmb_fuente.SelectedIndex==3 && leyendo)
+            {
+                cap.Stop();
             }
 
             carIndex = 0;
             switch (cmb_fuente.SelectedIndex)
             {
                 case 0:
-                    
                     SetVideo(txt_video.Text);
                     videoPlayer.Start();
                     timer1.Start();
@@ -153,16 +176,19 @@ namespace conteoVehiculos
                     break;
 
                 case 2:
+
                     setIpCamera(txt_ip.Text,txt_usuario.Text,txt_contrasenia.Text);
                     timer1.Start();
                     break;
 
                 case 3:
+                    leyendo = false;
                     setRTSPCamera(txt_ip.Text, txt_puerto.Text, txt_usuario.Text, txt_contrasenia.Text);
                     timer1.Start();
                     break;
 
                 default:
+                    MessageBox.Show("No se seleccionó una opcion valida");
                     break;
             }
         }
@@ -174,15 +200,15 @@ namespace conteoVehiculos
             {
                 if ((usuario != "" && contrasenia != ""))
                 {
-                    cap = new Capture("rtsp://" + txt_usuario.Text + ":" + txt_contrasenia.Text + "@" + txt_ip.Text + ":" + txt_puerto.Text + "");
+                    cap = new Capture("rtsp://" + usuario + ":" + contrasenia + "@" + ip + ":" + puerto + "");
                 }
                 else
                 {
                     cap = new Capture("rtsp://" + txt_ip.Text + ":" + txt_puerto.Text + "");
                 }
                 cap.ImageGrabbed += Cap_ImageGrabbed;
+                leyendo = true;
                 cap.Start();
-
             }
             catch (Exception)
             {
@@ -192,24 +218,152 @@ namespace conteoVehiculos
 
         private void Cap_ImageGrabbed(object sender, EventArgs e)
         {
-            Mat imagen = new Mat();
-            cap.Retrieve(imagen);
-            pb_lprptzanalitica.Image = imagen.Bitmap;
+            try
+            {
+                Mat imagen = new Mat();
+                cap.Retrieve(imagen);
+                //pb_lprptzanalitica.Image = imagen.Bitmap;
+
+                Bitmap frame = new Bitmap(imagen.Bitmap);
+                //pb_ipcam.Image = frame.Clone() as Bitmap;
+
+                if (previousFrame != null)
+                {
+                    // find the thresholded euclidian difference between two subsequent frames
+                    //ThresholdedEuclideanDifference threshold = new ThresholdedEuclideanDifference(40);
+                    ThresholdedEuclideanDifference threshold = new ThresholdedEuclideanDifference(thr);
+                    threshold.OverlayImage = previousFrame;
+                    var difference = threshold.Apply(frame.Clone() as Bitmap);
+
+                    // only keep big blobs
+                    var filter = new BlobsFiltering();
+                    filter.CoupledSizeFiltering = true;
+                    filter.MinHeight = int.Parse(txt_tamanio2.Text);
+                    filter.MinWidth = int.Parse(txt_tamanio2.Text);
+                    filter.ApplyInPlace(difference);
+
+
+
+                    //var sobl = new SobelEdgeDetector();
+                    //sobl.ApplyInPlace(difference);
+
+                    //erode image
+                    var erode = new Erosion3x3();
+                    for (int i = 0; i < int.Parse(txt_ers.Text); i++)
+                    {
+                        erode.ApplyInPlace(difference);
+                        //erode.ApplyInPlace(difference);
+                        //erode.ApplyInPlace(difference);
+                    }
+
+                    // dilate remaining blobs
+                    var dilate = new BinaryDilation3x3();
+                    for (int i = 0; i < int.Parse(txt_dils.Text); i++)
+                    {
+                        dilate.ApplyInPlace(difference);
+                        //dilate.ApplyInPlace(difference);
+                        //dilate.ApplyInPlace(difference);
+                        //dilate.ApplyInPlace(difference);
+                    }
+
+                    // put this image in the thresholded picturebox
+                    thresholdedBox.Image = difference.Clone() as Bitmap;
+
+                    // use this as a mask for the current frame
+                    var mask = new ApplyMask(difference);
+                    var maskedFrame = mask.Apply(frame);
+
+                    // put this image in the masked picturebox
+                    maskedBox.Image = maskedFrame.Clone() as Bitmap;
+
+                    // now find all moving blobs
+                    if (frameIndex % 10 == 0)
+                    {
+                        var counter = new BlobCounter();
+                        counter.ProcessImage(difference);
+
+                        // only keep blobs that:
+                        //     - do not overlap with known cars
+                        //     - do not overlap with other blobs 
+                        //     - have crossed the middle of the frame
+                        //     - are at least 100 pixels tall
+                        var blobs = counter.GetObjectsRectangles();
+                        var newBlobs = from r in counter.GetObjectsRectangles()
+                                       where !trackers.Any(t => t.Tracker.TrackingObject.Rectangle.IntersectsWith(r))
+                                           && !blobs.Any(b => b.IntersectsWith(r) && b != r)
+                                           && r.Top >= 240 && r.Bottom <= 480
+                                           && r.Height >= int.Parse(txt_tamanio.Text)
+                                       select r;
+
+                        // set up new camshift trackers for each detected blob
+                        foreach (var rect in newBlobs)
+                        {
+                            trackers.Add(new TrackerType(rect, frameIndex, ++carIndex));
+                        }
+                    }
+
+                    // now kill all car trackers that have expanded by too much
+                    trackers.RemoveAll(t => t.Tracker.TrackingObject.Rectangle.Height > 360);
+
+                    // and kill all trackers that have lived for 30 frames
+                    //trackers.RemoveAll(t => frameIndex - t.StartIndex > 30);
+                    trackers.RemoveAll(t => frameIndex - t.StartIndex > frames);
+
+                    // let all remaining trackers process the current frame
+                    var img = UnmanagedImage.FromManagedImage(maskedFrame);
+                    trackers
+                        .ForEach(t => t.Tracker.ProcessFrame(img));
+
+                    // remember this frame for next iteration
+                    previousFrame.Dispose();
+                    previousFrame = frame.Clone() as Bitmap;
+
+
+                    //escribir etiqueta para cada vehiculo
+                    var outputFrame = frame.Clone() as Bitmap;
+                    trackers
+                        .FindAll(t => !t.Tracker.TrackingObject.IsEmpty)
+                        .ForEach(t => DrawCarLabel(outputFrame, t.Tracker.TrackingObject.Rectangle, t.CarNumber));
+
+
+                    // regresar frame procesado
+                    frame = outputFrame;
+                    //pb_ipcam.Image = outputFrame;
+                    pb_lprptzanalitica.Image = outputFrame;
+                }
+                else
+                {   // recordar para siguiente iteracion
+                    previousFrame = frame.Clone() as Bitmap;
+                }
+
+                frameIndex++;
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error al decodificar video de PTZ, LPR o ANALITICA");
+            }
         }
 
         private void setIpCamera(string text, string usuario="", string contrasenia="")
         {
-            //var imagen = System.Drawing.Image.FromStream(res);
-            //videoPlayer desde camara
-            MJPEGStream stream = new MJPEGStream(text);
-            if ((usuario != "" && contrasenia != ""))
+            try
             {
-                stream.ForceBasicAuthentication = true;
-                stream.Login = usuario;
-                stream.Password = contrasenia;
+                //var imagen = System.Drawing.Image.FromStream(res);
+                //videoPlayer desde camara
+                MJPEGStream stream = new MJPEGStream(text);
+                if ((usuario != "" && contrasenia != ""))
+                {
+                    stream.ForceBasicAuthentication = true;
+                    stream.Login = usuario;
+                    stream.Password = contrasenia;
+                }
+                stream.NewFrame += new NewFrameEventHandler(video_NewFrame);
+                stream.Start();
             }
-            stream.NewFrame += new NewFrameEventHandler(video_NewFrame);
-            stream.Start();
+            catch (Exception)
+            {
+                MessageBox.Show("No se puede iniciar el stream de video");
+            }
         }
 
         private void video_NewFrame(object sender, NewFrameEventArgs eventArgs)
@@ -220,7 +374,8 @@ namespace conteoVehiculos
             if (previousFrame != null)
             {
                 // find the thresholded euclidian difference between two subsequent frames
-                ThresholdedEuclideanDifference threshold = new ThresholdedEuclideanDifference(40);
+                //ThresholdedEuclideanDifference threshold = new ThresholdedEuclideanDifference(40);
+                ThresholdedEuclideanDifference threshold = new ThresholdedEuclideanDifference(thr);
                 threshold.OverlayImage = previousFrame;
                 var difference = threshold.Apply(frame.Clone() as Bitmap);
 
@@ -295,7 +450,8 @@ namespace conteoVehiculos
                 trackers.RemoveAll(t => t.Tracker.TrackingObject.Rectangle.Height > 360);
 
                 // and kill all trackers that have lived for 30 frames
-                trackers.RemoveAll(t => frameIndex - t.StartIndex > 30);
+                //trackers.RemoveAll(t => frameIndex - t.StartIndex > 30);
+                trackers.RemoveAll(t => frameIndex - t.StartIndex > frames);
 
                 // let all remaining trackers process the current frame
                 var img = UnmanagedImage.FromManagedImage(maskedFrame);
@@ -347,7 +503,8 @@ namespace conteoVehiculos
             if (previousFrame != null)
             {
                 // find the thresholded euclidian difference between two subsequent frames
-                ThresholdedEuclideanDifference threshold = new ThresholdedEuclideanDifference(40);
+                //ThresholdedEuclideanDifference threshold = new ThresholdedEuclideanDifference(40);
+                ThresholdedEuclideanDifference threshold = new ThresholdedEuclideanDifference(thr);
                 threshold.OverlayImage = previousFrame;
                 var difference = threshold.Apply(frame);
 
@@ -422,7 +579,8 @@ namespace conteoVehiculos
                 trackers.RemoveAll(t => t.Tracker.TrackingObject.Rectangle.Height > 360);
 
                 // and kill all trackers that have lived for 30 frames
-                trackers.RemoveAll(t => frameIndex - t.StartIndex > 30);
+                //trackers.RemoveAll(t => frameIndex - t.StartIndex > 30);
+                trackers.RemoveAll(t => frameIndex - t.StartIndex > frames);
 
                 // let all remaining trackers process the current frame
                 var img = UnmanagedImage.FromManagedImage(maskedFrame);
@@ -584,6 +742,10 @@ namespace conteoVehiculos
                     txt_usuario.Enabled = false;
                     txt_contrasenia.Enabled = false;
                     txt_puerto.Enabled = false;
+                    txt_ip.Text = "";
+                    txt_usuario.Text = "";
+                    txt_contrasenia.Text = "";
+                    txt_puerto.Text = "";
                     break;
 
                 case 1:
@@ -594,6 +756,10 @@ namespace conteoVehiculos
                     txt_usuario.Enabled = false;
                     txt_contrasenia.Enabled = false;
                     txt_puerto.Enabled = false;
+                    txt_ip.Text = "";
+                    txt_usuario.Text = "";
+                    txt_contrasenia.Text = "";
+                    txt_puerto.Text = "";
                     break;
 
                 case 2:
@@ -604,6 +770,10 @@ namespace conteoVehiculos
                     txt_usuario.Enabled = true;
                     txt_contrasenia.Enabled = true;
                     txt_puerto.Enabled = false;
+                    txt_ip.Text = "http://192.168.0.6:8081";
+                    txt_usuario.Text = "";
+                    txt_contrasenia.Text = "";
+                    txt_puerto.Text = "";
                     break;
                 case 3:
                     txt_video.Enabled = false;
@@ -613,6 +783,10 @@ namespace conteoVehiculos
                     txt_usuario.Enabled = true;
                     txt_contrasenia.Enabled = true;
                     txt_puerto.Enabled = true;
+                    txt_ip.Text = "172.16.178.209";
+                    txt_usuario.Text = "Service";
+                    txt_contrasenia.Text = "Service.1";
+                    txt_puerto.Text = "554";
                     break;
 
                 default:

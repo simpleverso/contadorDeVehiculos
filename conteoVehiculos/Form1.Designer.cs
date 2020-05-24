@@ -67,6 +67,10 @@
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
+            this.label17 = new System.Windows.Forms.Label();
+            this.txt_frames = new System.Windows.Forms.TextBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.txt_thr = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.thresholdedBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maskedBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_ipcam)).BeginInit();
@@ -75,6 +79,7 @@
             // 
             // thresholdedBox
             // 
+            this.thresholdedBox.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.thresholdedBox.Location = new System.Drawing.Point(12, 218);
             this.thresholdedBox.Name = "thresholdedBox";
             this.thresholdedBox.Size = new System.Drawing.Size(152, 139);
@@ -84,6 +89,7 @@
             // 
             // maskedBox
             // 
+            this.maskedBox.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.maskedBox.Location = new System.Drawing.Point(170, 218);
             this.maskedBox.Name = "maskedBox";
             this.maskedBox.Size = new System.Drawing.Size(149, 139);
@@ -93,7 +99,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(645, 265);
+            this.button1.Location = new System.Drawing.Point(647, 247);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(121, 49);
             this.button1.TabIndex = 3;
@@ -127,6 +133,7 @@
             // 
             // videoPlayer
             // 
+            this.videoPlayer.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.videoPlayer.Location = new System.Drawing.Point(12, 12);
             this.videoPlayer.Name = "videoPlayer";
             this.videoPlayer.Size = new System.Drawing.Size(190, 151);
@@ -145,7 +152,7 @@
             // 
             this.carLabel.AutoSize = true;
             this.carLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.carLabel.Location = new System.Drawing.Point(341, 305);
+            this.carLabel.Location = new System.Drawing.Point(335, 333);
             this.carLabel.Name = "carLabel";
             this.carLabel.Size = new System.Drawing.Size(200, 24);
             this.carLabel.TabIndex = 7;
@@ -182,18 +189,17 @@
             // 
             this.txt_usuario.Location = new System.Drawing.Point(735, 158);
             this.txt_usuario.Name = "txt_usuario";
+            this.txt_usuario.PasswordChar = 'X';
             this.txt_usuario.Size = new System.Drawing.Size(196, 20);
             this.txt_usuario.TabIndex = 11;
-            this.txt_usuario.Text = "Service";
             // 
             // txt_contrasenia
             // 
             this.txt_contrasenia.Location = new System.Drawing.Point(735, 185);
             this.txt_contrasenia.Name = "txt_contrasenia";
-            this.txt_contrasenia.PasswordChar = 'x';
+            this.txt_contrasenia.PasswordChar = 'X';
             this.txt_contrasenia.Size = new System.Drawing.Size(196, 20);
             this.txt_contrasenia.TabIndex = 12;
-            this.txt_contrasenia.Text = "Service.1";
             // 
             // label3
             // 
@@ -242,7 +248,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(488, 231);
+            this.label7.Location = new System.Drawing.Point(454, 232);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(24, 13);
             this.label7.TabIndex = 19;
@@ -250,7 +256,7 @@
             // 
             // txt_dils
             // 
-            this.txt_dils.Location = new System.Drawing.Point(519, 227);
+            this.txt_dils.Location = new System.Drawing.Point(485, 228);
             this.txt_dils.Name = "txt_dils";
             this.txt_dils.Size = new System.Drawing.Size(22, 20);
             this.txt_dils.TabIndex = 18;
@@ -276,7 +282,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(490, 256);
+            this.label9.Location = new System.Drawing.Point(456, 257);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(22, 13);
             this.label9.TabIndex = 23;
@@ -284,7 +290,7 @@
             // 
             // txt_ers
             // 
-            this.txt_ers.Location = new System.Drawing.Point(519, 252);
+            this.txt_ers.Location = new System.Drawing.Point(485, 253);
             this.txt_ers.Name = "txt_ers";
             this.txt_ers.Size = new System.Drawing.Size(22, 20);
             this.txt_ers.TabIndex = 22;
@@ -292,6 +298,7 @@
             // 
             // pb_ipcam
             // 
+            this.pb_ipcam.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.pb_ipcam.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.pb_ipcam.Location = new System.Drawing.Point(208, 12);
             this.pb_ipcam.Name = "pb_ipcam";
@@ -350,10 +357,12 @@
             // 
             // pb_lprptzanalitica
             // 
+            this.pb_lprptzanalitica.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.pb_lprptzanalitica.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.pb_lprptzanalitica.Location = new System.Drawing.Point(400, 12);
             this.pb_lprptzanalitica.Name = "pb_lprptzanalitica";
             this.pb_lprptzanalitica.Size = new System.Drawing.Size(184, 151);
+            this.pb_lprptzanalitica.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pb_lprptzanalitica.TabIndex = 30;
             this.pb_lprptzanalitica.TabStop = false;
             // 
@@ -404,7 +413,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(808, 265);
+            this.button2.Location = new System.Drawing.Point(810, 247);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(121, 49);
             this.button2.TabIndex = 36;
@@ -412,11 +421,49 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click_1);
             // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(387, 286);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(29, 13);
+            this.label17.TabIndex = 38;
+            this.label17.Text = "Frms";
+            // 
+            // txt_frames
+            // 
+            this.txt_frames.Location = new System.Drawing.Point(416, 282);
+            this.txt_frames.Name = "txt_frames";
+            this.txt_frames.Size = new System.Drawing.Size(22, 20);
+            this.txt_frames.TabIndex = 37;
+            this.txt_frames.Text = "30";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(456, 283);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(23, 13);
+            this.label18.TabIndex = 40;
+            this.label18.Text = "Thr";
+            // 
+            // txt_thr
+            // 
+            this.txt_thr.Location = new System.Drawing.Point(485, 279);
+            this.txt_thr.Name = "txt_thr";
+            this.txt_thr.Size = new System.Drawing.Size(22, 20);
+            this.txt_thr.TabIndex = 39;
+            this.txt_thr.Text = "40";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(945, 389);
+            this.Controls.Add(this.label18);
+            this.Controls.Add(this.txt_thr);
+            this.Controls.Add(this.label17);
+            this.Controls.Add(this.txt_frames);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.label15);
@@ -506,6 +553,10 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.TextBox txt_frames;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.TextBox txt_thr;
     }
 }
 

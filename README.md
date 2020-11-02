@@ -1,7 +1,7 @@
 # contadorDeVehiculos
 Conteo de vehículos en tiempo real con visión artificial
 
-#requerimientos:
+# requerimientos:
 
 * Net Framework 4.5
 * Camara web con feed de video
@@ -12,6 +12,11 @@ Conteo de vehículos en tiempo real con visión artificial
 * Procesador i3 o superior.
 
 
-#problemas detectados:
+# problemas detectados:
 
-**no cuenta bien en casos donde el vehiculo es color negro**
+No cuenta bien en casos donde el vehiculo es color negro
+
+# TODO
+
+* Agregar conversion para evitar el problema del contedo de vehiculos de color negro
+* Mejorar el rango de color para tener mejores resultados de busqueda

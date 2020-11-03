@@ -1,6 +1,8 @@
 # contadorDeVehiculos
 Conteo de vehículos en tiempo real con visión artificial
 
+video: https://youtu.be/iI6lH4Np_dY
+
 # requerimientos:
 
 * Net Framework 4.5

@@ -793,6 +793,9 @@ namespace conteoVehiculos
                     //"rtsp://service:Service.1@172.16.8.69/1/stream1/"
                     //rtsp://service:Service.1@172.16.8.69:554/1/stream1/
                     //rtsp://service:Service.1@172.16.8.69:554/stream1/
+                    
+                    //#Esto lo da la misma camara en la consola
+                    //rtsp://service:Service.1@172.16.8.69:554/video.mp4?line=1&inst=1&rec=0&buffer_ms=1000&rnd=54579
                     txt_puerto.Text = "554";
                     break;
 

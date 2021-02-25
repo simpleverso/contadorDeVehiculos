@@ -789,6 +789,10 @@ namespace conteoVehiculos
                     //nuevo
                     //txt_usuario.Text = "service";
                     //txt_contrasenia.Text = "Service.1";
+                    //funciona con cxv media player
+                    //"rtsp://service:Service.1@172.16.8.69/1/stream1/"
+                    //rtsp://service:Service.1@172.16.8.69:554/1/stream1/
+                    //rtsp://service:Service.1@172.16.8.69:554/stream1/
                     txt_puerto.Text = "554";
                     break;
 

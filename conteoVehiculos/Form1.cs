@@ -784,8 +784,8 @@ namespace conteoVehiculos
                     txt_contrasenia.Enabled = true;
                     txt_puerto.Enabled = true;
                     txt_ip.Text = "172.16.178.209";
-                    txt_usuario.Text = "Service";
-                    txt_contrasenia.Text = "Service.1";
+                    //txt_usuario.Text = "Service";
+                    //txt_contrasenia.Text = "Service.1";
                     //nuevo
                     //txt_usuario.Text = "service";
                     //txt_contrasenia.Text = "Service.1";
